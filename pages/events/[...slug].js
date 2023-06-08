@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 import { getFilteredEvents } from "../../data/eventsData";
 import EventList from "../../components/events/EventList";
 import ResultsTitle from "../../components/results-title/results-title";
+import Button from "../../components/events/ui/button";
+import ErrorAlert from "../../components/error-alert/error-alert";
 
 export default function FilteredEvents() {
   const router = useRouter();
@@ -18,25 +20,32 @@ export default function FilteredEvents() {
 
   const numYear = +filteredYear;
   const numMonth = +filteredMonth;
-  console.log( numYear);
+  console.log(numYear);
 
-    if (
-      isNaN(numYear) ||
-      isNaN(numMonth) ||
-      numYear > 2030 ||
-      numYear <= 2021 ||
-      numMonth < 1 ||
-      numMonth > 12
-
-      
-    ) {
-      return <p>Invalid date.......</p>;
-    }
+  if (
+    isNaN(numYear) ||
+    isNaN(numMonth) ||
+    numYear > 2030 ||
+    numYear <= 2021 ||
+    numMonth < 1 ||
+    numMonth > 12
+  ) {
+    return <p>Invalid date.......</p>;
+  }
 
   const filteredEvents = getFilteredEvents(numYear, numMonth);
 
   if (!filteredEvents || filteredEvents.length === 0) {
-    return <p>No events found</p>;
+    return (
+      <>
+        <ErrorAlert>
+          <p>No events found</p>
+        </ErrorAlert>
+        <div>
+          <Button link="/events">Show All Events</Button>
+        </div>
+      </>
+    );
   }
 
   const date = new Date(numYear, numMonth - 1);
